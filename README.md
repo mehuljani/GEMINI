@@ -17,15 +17,15 @@ GEMINI takes following two command-line arguments
 1. Genome file in GenBank(full) format.
 2. Name of Output file
 ##### Optional
-  -h, --help    show this help message and exit
+  -h, --help    shows help message and exit
   
-  -cite         show publication reference and exit
+  -cite         shows publication reference and exit
   
-  -info         show information about program and exit
+  -info         shows information about program and exit
   
-  -debug        Keep Temporary files
+  -debug        Keeps Temporary files
   
-  -verbose      Print on screen
+  -verbose      Prints on screen
   
   -seg SEG      Provide segmentation threshold in range 0-1
   
