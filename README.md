@@ -12,6 +12,7 @@ GEMINI takes following two command-line arguments
 
 ### Output
 GEMINI outputs a space separated file with six columns.
+
 Column 1- GI-> Genomic island id
 Column 2- Start-> Start co-ordinate of genomic island
 Column 3- End-> End co-ordinate of genomic island
