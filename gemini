@@ -1,0 +1,304 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import heapq
+import argparse
+import random
+import re
+from Bio import SeqIO
+
+def get_arguments():
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("filename", help="genome file in GenBank (full) format")
+	parser.add_argument("output", help="Output filename")
+	parser.add_argument("-cite", help="show publication reference and exit", action="store_true")
+	parser.add_argument("-info", help="show information about program and exit", action="store_true")
+	parser.add_argument("-debug", help="Keep Temporary files", action="store_true")
+	parser.add_argument("-verbose", help="Print on screen", action="store_true")
+	parser.add_argument("-seg", help="Provide segmentation threshold in range 0-1", type=float)
+	parser.add_argument("-clus1", help="Provide contiguous clustering threshold in range 0-1", type=float)
+	parser.add_argument("-clus2", help="Provide non-contiguous clustering threshold in range 0-1", type=float)
+	args = parser.parse_args()
+
+	if args.cite:
+		print "If you use GEMINI, then please cite \"Jani, Mehul, Kalai Mathee, and Rajeev K. Azad. \"Identification of novel genomic islands in Liverpool epidemic strain of Pseudomonas aeruginosa using segmentation and clustering.\" Frontiers in microbiology 7 (2016)\".\nThank you\n"  
+		sys.exit()
+
+	if args.info:
+		print "This is a genome mining tool, GEMINI 1.0 developed by Mehul Jani, University of North Texas"
+		sys.exit()
+
+	if args.seg:
+		if (args.seg > 0) and (args.seg < 1):
+			segthres=args.seg
+		else:
+			print "Segmentation threshold should be between 0 and 1"
+			sys.exit()
+	else:
+		segthres=0.9999999999
+
+	if args.clus1:
+		if (args.clus1 > 0) and (args.clus1 < 1):
+			clus1thres=args.clus1
+		else:
+			print "Clustering threshold should be between 0 and 1"
+			sys.exit()
+	else:
+		clus1thres=0.9999999999999
+
+	if args.clus2:
+		if (args.clus2 > 0) and (args.clus2 < 1):
+			clus2thres=args.clus2
+		else:
+			print "Clustering threshold should be between 0 and 1"
+			sys.exit()
+	else:
+		clus2thres=0.9999999999999
+
+	if args.debug:
+		debug=1
+	else:
+		debug=0
+	if args.verbose:
+		verbose=1
+	else:
+		verbose=0
+	
+	IN= args.filename
+	OUT=args.output
+	return (IN, OUT, debug, verbose, segthres, clus1thres, clus2thres)
+	#print args.output
+	#sys.exit()
+
+#Get parameters/arguments
+param=get_arguments()
+IN=param[0]
+OUT=param[1]
+debug=param[2]
+verbose=param[3]
+seg=(param[4])
+clus1=(param[5])
+clus2=(param[5])
+#print IN, OUT
+
+#Check if file exists else exit
+try:
+	f=open(IN, "r")
+except:
+	print "Check input file name"
+	sys.exit()
+
+#Check if input file is in GenBank format
+
+header=f.readline()
+if header.startswith("LOCUS"):
+	#Save user defined output filename
+	output=open(OUT, 'w')
+else :
+	print "Please provide a  GenBank file"
+	sys.exit()
+
+
+
+#Create handle for temporary file in fasta format 
+outname=IN+'_GEMINI'
+out=open(outname, 'w')
+
+if verbose==1:
+	print "Genome loaded. Starting analysis..."
+	
+start_col, end_col, rna_start, rna_end=[],[],[],[]
+
+#Get fasta sequence, gene and rRNA co-ordinates from genbank file
+for gb_record in SeqIO.parse(IN, "genbank"):
+	seq=gb_record.seq
+	seq=seq.upper()
+	seq=str(seq)
+	#seq=re.sub (r'[^ATCG]', random.choice(nucs), seq) 
+	#out.write("%s" % (seq))
+
+	
+
+	for feature in gb_record.features:
+		if feature.type == "CDS":
+			location1=feature.location
+			start=location1.start
+			end=location1.end
+			start_col.append(start)
+			end_col.append(end)
+		if feature.type == "rRNA":
+			location1=feature.location
+			start=location1.start
+			end=location1.end
+			rna_start.append(start)
+			rna_end.append(end)
+
+nucs=['A','T','C','G']
+seq= re.sub (r'[^ATCG]', random.choice(nucs), seq) 	
+out.write("%s" % (seq))
+
+if verbose==1:
+	print "Completed extracting gene co-ordinates"
+
+length=len(seq)
+
+#Call compiled c program for recursive segmentation and agglomerative clustering
+
+if verbose==1:
+	print ("Using %.15lf %.15lf %.15lf as segmentation, contiguous clustering and non-contiguous clustering thresholds" %(seg, clus1, clus2) ) 
+	
+	os.system("./gemini.out %s %.15lf %.15lf %.15lf 1" %(outname, seg, clus1, clus2))
+else:
+	os.system("./gemini.out %s %.15lf %.15lf %.15lf 0" %(outname, seg, clus1, clus2))
+#################################################post-processing######################################
+#open segmentation output file
+f=open("temp", "r")
+col1, col2, col3=[],[],[]
+for line in f:
+	line=line.strip()
+	a=int(line.split('\t')[0])
+	b=int(line.split('\t')[1])
+	c=int(line.split('\t')[2])
+	col1.append(a)
+	col2.append(b)
+	col3.append(c)
+
+#Check distribution of segments in the genome
+
+if verbose==1:
+	print "Checking distribution of segments to determine presence of amiguous native cluster"
+
+size=[0]*(max(col3)+1)
+distribution=[0]*(max(col3)+1)
+for clusterid in range(1,max(col3)+1):
+	aa, totaa=0, 0
+	for i in range (len(col3)):
+		if i == 0:
+			if (col3[i]==clusterid):
+				totaa+=1
+				if col3[i+1]==clusterid:
+					aa+=1
+		elif i == (len (col3)-1):
+			if (col3[i]==clusterid):
+				totaa+=1
+				if col3[i-1]==clusterid:
+					aa+=1
+		else:
+			if (col3[i]==clusterid):
+				totaa+=1
+				if col3[i+1]==clusterid or col3[i-1] == clusterid:
+					aa+=1
+		if col3[i] == clusterid:
+			size[clusterid]+=(col2[i]-col1[i])
+			
+	distribution[clusterid]=aa/float(totaa)
+	#print clusterid, totaa, aa, aa/float(totaa), size[clusterid]/float(length)
+
+
+#Return index of three largest clusters by size
+
+max_clus=heapq.nlargest(3, xrange(len(size)), size.__getitem__) 
+
+nat_clus=size.index(max(size))
+
+#print max_clus
+maxd=1
+
+#Identify compositionally amibguous native cluster
+for clusters in max_clus:
+	if distribution[clusters]<maxd:
+		maxd=distribution[clusters]
+		sec_nat=clusters
+
+#Merge native clusters
+if size[sec_nat]>=20:
+	if verbose==1:
+		print "native cluster are", str(nat_clus), "and", str(sec_nat)
+	for i in range(len(col3)):
+		if col3[i]==sec_nat:
+			col3[i]=nat_clus
+
+
+cond1,cond2,cond3=[],[],[]	
+
+#Merge contiguous segments belonging to same cluster (Native-Native or Alien-Alien). Identify Mosaic clusters
+for i in range (len(col3)-1):
+	#print col1[i], col2[i], col3[i]
+	if (col3[i] == nat_clus):
+		if (col3[i]==col3[i+1]):
+			col1[i+1]=col1[i]
+		else:
+			cond1.append(col1[i])
+			cond2.append(col2[i])
+			cond3.append(col3[i])
+			if i == (len(col3)-2):
+				cond1.append(col1[i+1])
+				cond2.append(col2[i+1])
+				cond3.append(col3[i+1])
+
+
+	else:
+		if (col3[i]==col3[i+1]):
+			col1[i+1]=col1[i]
+		elif (col3[i+1]!=nat_clus):
+			col1[i+1]=col1[i]
+			col3[i+1]='M' #Mosaic			
+
+		else:
+			cond1.append(col1[i])
+			cond2.append(col2[i])
+			cond3.append(col3[i])
+			if i == (len(col3)-2):
+				cond1.append(col1[i+1])
+				cond2.append(col2[i+1])
+				cond3.append(col3[i+1])
+
+all_atyp_start, all_atyp_end, all_atyp_clus=[],[],[]
+put_gi_s, put_gi_e, put_gi_c, put_gi_g=[],[],[],[]
+
+#Identify all regions with atypical composition
+
+for i in range (len(cond1)):
+	if cond3[i]!=nat_clus:
+		all_atyp_start.append(cond1[i])
+		all_atyp_end.append(cond2[i])
+		all_atyp_clus.append(cond3[i])
+
+for i in range (len(all_atyp_start)):
+	gene_counter=0
+	for j in range (len(start_col)):
+		if ((all_atyp_start[i]-50)<=start_col[j] and (all_atyp_end[i]+50)>=end_col[j]):
+			gene_counter+=1
+			#print all_atyp_start[i], all_atyp_end[i], start_col[j], end_col[j]
+	if gene_counter>=8: #Identify clusters having at least eight genes
+		put_gi_s.append(all_atyp_start[i])
+		put_gi_e.append(all_atyp_end[i])
+		put_gi_c.append(all_atyp_clus[i])
+		put_gi_g.append(gene_counter)		
+		#print all_atyp_start[i], all_atyp_end[i], all_atyp_clus[i], gene_counter
+
+
+#print (("GI\tstart\tend\tlength\tMosaic\tno. of genes") file=output)
+print >>output, "GI start end length Mosaic #genes"
+counter=0
+
+#Annotate atypical regions as GI if they do not contain rRNA genes
+
+for i in range (len(put_gi_s)):
+	for j in range (len(rna_start)):
+		if ((put_gi_s[i]-50)<=rna_start[j] and (put_gi_e[i]+50)>=rna_end[j]):
+			break
+	else:
+		if put_gi_c[i] is not 'M':
+			put_gi_c[i]='-'
+		counter+=1
+		print >>output, counter, put_gi_s[i], put_gi_e[i], put_gi_e[i]-put_gi_s[i], put_gi_c[i], put_gi_g[i]
+
+if debug==0:
+	os.system("rm %s" %outname)
+	os.system("rm temp")
+
+if verbose==1:
+	print ("Completed!! Check %s file for genomic island predictions\n" %OUT)
