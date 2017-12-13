@@ -2,8 +2,14 @@
 GEMINI is a **ge**nome **mini**ng tool, which detects regions of atypical nucleotide composition. It delineates compositional core (native) and accessory (alien) genome.
 
 ### Usage
+First set the permissions for the files
 ```
-./gemini.py genome.gbk output.txt
+sudo chmod 775 gemini
+sudo chmod 775 gemini.out
+```
+Program can now be run as
+```
+./gemini.py [options] genome.gbk output.txt
 ```
 ### Input
 ##### Required
