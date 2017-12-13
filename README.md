@@ -3,7 +3,7 @@ GEMINI is a **ge**nome **mini**ng tool, which detects regions of atypical nucleo
 
 ### Usage
 ```
-python gemini.py genome.gbk output.txt
+./gemini.py genome.gbk output.txt
 ```
 ### Input
 ##### Required
