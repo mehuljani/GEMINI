@@ -6,11 +6,11 @@ GEMINI is a **ge**nome **mini**ng tool, which detects regions of atypical nucleo
 python gemini.py genome.gbk output.txt
 ```
 ### Input
-#### Required
+##### Required
 GEMINI takes following two command-line arguments
 1. Genome file in GenBank(full) format.
 2. Name of Output file
-#### Optional
+##### Optional
   -h, --help    show this help message and exit
   
   -cite         show publication reference and exit
