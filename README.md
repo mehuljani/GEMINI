@@ -1,4 +1,4 @@
-# GEMINI
+## GEMINI
 GEMINI is a **ge**nome **mini**ng tool, which detects regions of atypical nucleotide composition. It delineates compositional core (native) and accessory (alien) genome.
 
 ### Usage
