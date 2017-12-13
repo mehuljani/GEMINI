@@ -14,10 +14,15 @@ GEMINI takes following two command-line arguments
 GEMINI outputs a space separated file with six columns.
 
 Column 1- GI-> Genomic island id
+
 Column 2- Start-> Start co-ordinate of genomic island
+
 Column 3- End-> End co-ordinate of genomic island
+
 Column 4- Length-> Length of the genomic island
+
 Column 5- Mosaic-> If a genomic island is mosaic (i.e. composed of more than one cluster) it is shown as 'M'.
+
 Column 6- #genes-> Number of genes harbored on genomic island
 
 ### Reference
