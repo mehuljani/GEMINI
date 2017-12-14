@@ -13,22 +13,14 @@ def get_arguments():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("filename", help="genome file in GenBank (full) format")
 	parser.add_argument("output", help="Output filename")
-	parser.add_argument("-cite", help="show publication reference and exit", action="store_true")
-	parser.add_argument("-info", help="show information about program and exit", action="store_true")
+	parser.add_argument("-cite", help="show publication reference and exit", action="version", version='If you use GEMINI, then please cite \"Jani, Mehul, Kalai Mathee, and Rajeev K. Azad. \"Identification of novel genomic islands in Liverpool epidemic strain of Pseudomonas aeruginosa using segmentation and clustering.\" Frontiers in microbiology 7 (2016)\".\nThank you\n')
+	parser.add_argument("-info", help="show information about program and exit", action='version', version='%(prog)s is a genome mining tool, GEMINI 1.0 developed by Mehul Jani, University of North Texas')	
 	parser.add_argument("-debug", help="Keep Temporary files", action="store_true")
 	parser.add_argument("-verbose", help="Print on screen", action="store_true")
 	parser.add_argument("-seg", help="Provide segmentation threshold in range 0-1", type=float)
 	parser.add_argument("-clus1", help="Provide contiguous clustering threshold in range 0-1", type=float)
 	parser.add_argument("-clus2", help="Provide non-contiguous clustering threshold in range 0-1", type=float)
 	args = parser.parse_args()
-
-	if args.cite:
-		print "If you use GEMINI, then please cite \"Jani, Mehul, Kalai Mathee, and Rajeev K. Azad. \"Identification of novel genomic islands in Liverpool epidemic strain of Pseudomonas aeruginosa using segmentation and clustering.\" Frontiers in microbiology 7 (2016)\".\nThank you\n"  
-		sys.exit()
-
-	if args.info:
-		print "This is a genome mining tool, GEMINI 1.0 developed by Mehul Jani, University of North Texas"
-		sys.exit()
 
 	if args.seg:
 		if (args.seg > 0) and (args.seg < 1):
