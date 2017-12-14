@@ -9,12 +9,17 @@ sudo chmod 775 gemini.out
 ```
 Program can now be run as
 ```
-./gemini.py [options] genome.gbk output.txt
+./gemini [options] genome.gbk output.txt
 ```
+
 ### Add to Path
 Add the following line to your $HOME/.bashrc file to make it available to all users:
 ```
 export PATH=$PATH:'Path/to/GEMINI'
+```
+GEMINI can now be used from any folder as
+```
+gemini [options] genome.gbk output.txt
 ```
 
 ### Input
