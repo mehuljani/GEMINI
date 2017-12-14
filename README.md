@@ -11,6 +11,13 @@ Program can now be run as
 ```
 ./gemini.py [options] genome.gbk output.txt
 ```
+### Add to Path
+Add the following lines to your $HOME/.bashrc file to make it available to all users:
+```
+export PATH=$PATH:$HOME/GEMINI/gemini
+export PATH=$PATH:$HOME/GEMINI/gemini.out
+```
+
 ### Input
 ##### Required input
 GEMINI takes following two command-line arguments
