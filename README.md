@@ -19,21 +19,21 @@ GEMINI takes following two command-line arguments
 ##### Optional input
 Following options can be used with the program
 
-  -h, --help    shows help message and exit
+  -h, --help          shows help message and exit
   
-  -cite         shows publication reference and exit
+  -cite               shows publication reference and exit
   
-  -info         shows information about program and exit
+  -info               shows information about program and exit
   
-  -debug        Keeps Temporary files
+  -debug              Keeps Temporary files
   
-  -verbose      Prints on screen
+  -verbose            Prints on screen
   
-  -seg SEG      Provide segmentation threshold in range 0-1
+  -seg SEG            Provide segmentation threshold in range 0-1
   
-  -clus1 CLUS1  Provide contiguous clustering threshold in range 0-1
+  -clus1 CLUS1        Provide contiguous clustering threshold in range 0-1
   
-  -clus2 CLUS2  Provide non-contiguous clustering threshold in range 0-1
+  -clus2 CLUS2        Provide non-contiguous clustering threshold in range 0-1
 
 
 ### Output
