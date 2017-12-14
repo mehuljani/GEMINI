@@ -64,5 +64,6 @@ Column 6- #genes-> Number of genes harbored on genomic island
 ```
 
 ### Reference
-(GEMINI)[https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4971588/pdf/fmicb-07-01210.pdf]
+[GEMINI](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4971588/pdf/fmicb-07-01210.pdf)
+
 Jani, Mehul, Kalai Mathee, and Rajeev K. Azad. "Identification of novel genomic islands in Liverpool epidemic strain of Pseudomonas aeruginosa using segmentation and clustering." Frontiers in microbiology 7 (2016).
