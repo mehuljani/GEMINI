@@ -12,11 +12,13 @@ Program can now be run as
 ./gemini.py [options] genome.gbk output.txt
 ```
 ### Input
-##### Required
+##### Required input
 GEMINI takes following two command-line arguments
 1. Genome file in GenBank(full) format.
 2. Name of Output file
-##### Optional
+##### Optional input
+Following options can be used with the program
+
   -h, --help    shows help message and exit
   
   -cite         shows publication reference and exit
