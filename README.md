@@ -64,7 +64,7 @@ Column 6- #genes-> Number of genes harbored on genomic island
 
 ### Example
 ```
-./gemini -debug -verbose -seg 0.999999999 -clus1 0.999999999999 -clus2 0.999999999999 example.gbk exampl_output.txt
+./gemini -debug -verbose -seg 0.999999999 -clus1 0.999999999999 -clus2 0.999999999999 example.gbk example_output.txt
 ```
 
 ### Reference
